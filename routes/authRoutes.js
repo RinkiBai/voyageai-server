@@ -5,6 +5,11 @@ import path from "path";
 
 const router = express.Router();
 
+// ✅ Test route
+router.get("/test", (req, res) => {
+  res.json({ message: "Auth test route working ✅" });
+});
+
 // Multer config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

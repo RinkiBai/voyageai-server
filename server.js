@@ -4,6 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 
 // ✅ Route imports
+import authRoutes from "./routes/authRoutes.js";  // ✅ Correct filename
 import chatRoutes from "./routes/chatRoutes.js";
 import searchRoutes from "./routes/search.js";
 import subscribeRoute from "./routes/subscribe.js";
@@ -17,24 +18,24 @@ dotenv.config();
 // ✅ Initialize Express app
 const app = express();
 
-// ✅ Proper CORS configuration
+// ✅ CORS setup
 app.use(cors({
-  origin: "http://localhost:5173", // Allow Vite frontend
-  credentials: true                // Needed for cookies/auth headers
+  origin: "http://localhost:5173",
+  credentials: true
 }));
 
-app.use(express.json()); // For parsing JSON request bodies
+app.use(express.json());
 
-// ✅ MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+// ✅ Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log("✅ MongoDB connected"))
+.catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ✅ API Routes
+// ✅ API routes
+app.use("/api/auth", authRoutes);  // ✅ Auth route now linked correctly
 app.use("/api/chat", chatRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/subscribe", subscribeRoute);
@@ -42,7 +43,7 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
 
-// ✅ Root
+// ✅ Root route
 app.get("/", (req, res) => {
   res.send("🌍 VoyageAI API is running...");
 });

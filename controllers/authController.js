@@ -52,3 +52,33 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid user data");
   }
 });
+
+// ✅ Login User
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Please enter both email and password");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    res.status(401);
+    throw new Error("Invalid credentials");
+  }
+
+  const token = generateToken(user._id);
+
+  res.json({
+    message: "Login successful",
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePic: user.profilePic,
+      token,
+    },
+  });
+});
